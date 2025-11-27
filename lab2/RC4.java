@@ -47,21 +47,28 @@ public class RC4 {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Enter a key for RC4 encryption (e.g., mysecretkey):");
+        System.out.println("Enter a key for RC4 encryption:");
         String keyString = scanner.nextLine();
         byte[] key = keyString.getBytes();
 
-        RC4 rc4 = new RC4(key);
+        // Encryption
+        RC4 rc4Encrypt = new RC4(key);
         String plaintext = "Hello World";
-
         System.out.println("Original Text: " + plaintext);
 
-        byte[] ciphertext = rc4.encrypt(plaintext.getBytes());
-        System.out.println("Encrypted Text: " + new String(ciphertext));
+        byte[] ciphertext = rc4Encrypt.encrypt(plaintext.getBytes());
+        System.out.println("Encrypted Bytes:");
+        for (byte b : ciphertext)
+            System.out.print(b + " ");
+        System.out.println();
 
-        byte[] decryptedText = rc4.encrypt(ciphertext);
-        System.out.println("Decrypted Text: " + new String(decryptedText));
+        // Decryption (NEW instance)
+        RC4 rc4Decrypt = new RC4(key);
+        byte[] decryptedBytes = rc4Decrypt.encrypt(ciphertext);
+        String decryptedText = new String(decryptedBytes);
+        System.out.println("Decrypted Text: " + decryptedText);
 
         scanner.close();
     }
+
 }
