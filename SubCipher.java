@@ -1,55 +1,42 @@
 import java.util.Scanner;
 
-public class SubCipher {
-    private static final String ABC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-    public static String enc(String msg, String key) {
-        StringBuilder out = new StringBuilder();
-        msg = msg.toUpperCase();
-        for (int i = 0; i < msg.length(); i++) {
-            char ch = msg.charAt(i);
-            if (Character.isLetter(ch)) {
-                int idx = ABC.indexOf(ch);
-                char c = key.charAt(idx);
-                out.append(c);
-            } else {
-                out.append(ch);
+public class _1d_subcipher {
+    public static String Alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public static String encrypt(String s, String key){
+        StringBuilder sb = new StringBuilder();
+        s = s.toUpperCase();
+        for(int i=0;i<s.length();i++){
+            char ch = s.charAt(i);
+            if(Character.isLetter(ch)){
+                int idx = Alpha.indexOf(ch);
+                sb.append(key.charAt(idx));
+            }else{
+                sb.append(ch);
             }
         }
-        return out.toString();
+        return sb.toString();
     }
-
-    public static String dec(String encMsg, String key) {
-        StringBuilder out = new StringBuilder();
-        encMsg = encMsg.toUpperCase();
-        for (int i = 0; i < encMsg.length(); i++) {
-            char ch = encMsg.charAt(i);
-            if (Character.isLetter(ch)) {
+    public static String decrypt(String s, String key){
+        StringBuilder sb = new StringBuilder();
+        for(int i=0;i<s.length();i++){
+            char ch = s.charAt(i);
+            if(Character.isLetter(ch)){
                 int idx = key.indexOf(ch);
-                char c = ABC.charAt(idx);
-                out.append(c);
-            } else {
-                out.append(ch);
+                sb.append(Alpha.charAt(idx));
+            }else{
+                sb.append(ch);
             }
         }
-        return out.toString();
+        return sb.toString();
     }
-
     public static void main(String[] args) {
+        String s = "Hello world!";
+        System.out.println("The original : " + s);
         Scanner sc = new Scanner(System.in);
-
-        String key = "QWERTYUIOPLKJHGFDSAZXCVBNM";
-        System.out.println("Using substitution key: " + key);
-
-        System.out.print("Enter the message to encrypt: ");
-        String msg = sc.nextLine();
-
-        String encMsg = enc(msg, key);
-        System.out.println("Encrypted Message: " + encMsg);
-
-        String decMsg = dec(encMsg, key);
-        System.out.println("Decrypted Message: " + decMsg);
-
-        sc.close();
+        System.out.println("Enter key : ");
+        String key = sc.nextLine();
+        String enc = encrypt(s, key);
+        System.out.println("Encrpted String : " +enc );
+        System.out.println("Decrypted String : "+ decrypt(enc, key));
     }
 }
