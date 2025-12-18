@@ -1,47 +1,31 @@
-import java.util.Scanner;
+import java.util.*;
 
-public class Caesar {
-    public static String enc(String msg, int k) {
-        StringBuilder out = new StringBuilder();
-        for (int i = 0; i < msg.length(); i++) {
-            char ch = msg.charAt(i);
-            if (Character.isUpperCase(ch)) {
-                char c = (char) (((int) ch + k - 65) % 26 + 65);
-                out.append(c);
+public class _1c_ceaser {
+    public static String encrypt(String s, int key){
+        StringBuilder sb = new StringBuilder();
+        for(int i=0;i<s.length();i++){
+            char ch = s.charAt(i);
+            if(Character.isUpperCase(ch)){
+                sb.append((char)((ch-'A'+key)%26 + 'A'));
             } else if (Character.isLowerCase(ch)) {
-                char c = (char) (((int) ch + k - 97) % 26 + 97);
-                out.append(c);
-            } else {
-                out.append(ch);
+                sb.append((char)((ch-'a'+key)%26 + 'a'));
+            }else{
+                sb.append(ch);
             }
         }
-        return out.toString();
+        return sb.toString();
     }
-
-    public static String dec(String msg, int k) {
-        return enc(msg, 26 - k);
+    public static String decrypt(String s, int key){
+        return encrypt(s,26-key);
     }
-
     public static void main(String[] args) {
+        String s = "Hello world!";
+        System.out.println("The original : " + s);
         Scanner sc = new Scanner(System.in);
-
-        System.out.print("Enter the message: ");
-        String msg = sc.nextLine();
-
-        System.out.print("Enter the shift value (1-25): ");
-        int k = sc.nextInt();
-
-        if (k < 1 || k > 25) {
-            System.out.println("Invalid shift value. Please enter a number between 1 and 25.");
-            return;
-        }
-
-        String encMsg = enc(msg, k);
-        System.out.println("Encrypted Message: " + encMsg);
-
-        String decMsg = dec(encMsg, k);
-        System.out.println("Decrypted Message: " + decMsg);
-
-        sc.close();
+        System.out.println("Enter key size : ");
+        int key = sc.nextInt();
+        String enc = encrypt(s, key);
+        System.out.println("Encrpted String : " +enc );
+        System.out.println("Decrypted String : "+ decrypt(enc, key));
     }
 }
