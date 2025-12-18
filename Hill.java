@@ -1,84 +1,80 @@
-import java.util.Scanner;
-
-public class Hill {
-    public static int[] mul(int[][] k, int[] v) {
-        int[] r = new int[v.length];
-        for (int i = 0; i < k.length; i++) {
-            r[i] = 0;
-            for (int j = 0; j < k[i].length; j++) {
-                r[i] += k[i][j] * v[j];
-            }
-            r[i] = r[i] % 26;
+import java.util.*;
+public class _1e_HillCipher {
+    public static String encrypt(int[][] keyMat, String str){
+        int[] textVector = toVector(str);
+        int[] enc = multiply(keyMat, textVector);
+        return toStr(enc);
+    }
+    public static String decrypt(int[][] keyMat, String str) {
+        int[][] iKeyMat = invKey(keyMat);
+        int[] textVector = toVector(str);
+        int[] dec = multiply(iKeyMat, textVector);
+        return toStr(dec);
+    }
+    public static int[] toVector(String str){
+        int[] v = new int[str.length()];
+        for(int i=0;i<str.length();i++){
+            v[i] = str.charAt(i) - 'A';
         }
-        return r;
-    }
-
-    public static int inv(int a, int m) {
-        a = a % m;
-        for (int x = 1; x < m; x++) {
-            if ((a * x) % m == 1)
-                return x;
-        }
-        return 1;
-    }
-
-    public static int[][] invKey(int[][] k) {
-        int det = (k[0][0] * k[1][1] - k[0][1] * k[1][0]) % 26;
-        det = (det + 26) % 26;
-        int invDet = inv(det, 26);
-        int[][] r = new int[2][2];
-        r[0][0] = (k[1][1] * invDet) % 26;
-        r[1][1] = (k[0][0] * invDet) % 26;
-        r[0][1] = (-k[0][1] * invDet + 26) % 26;
-        r[1][0] = (-k[1][0] * invDet + 26) % 26;
-        return r;
-    }
-
-    public static int[] toVec(String s) {
-        int[] v = new int[s.length()];
-        for (int i = 0; i < s.length(); i++)
-            v[i] = s.charAt(i) - 'A';
         return v;
     }
+    public static int[] multiply(int[][] mat, int[] vec){
+        int[] res = new int[vec.length];
+        for(int i=0;i<mat.length;i++){
+            res[i] = 0;
+            for(int j=0;j<mat[0].length;j++){
+                res[i] += mat[i][j] * vec[j];
+            }
+            res[i] = res[i]%26;
+        }
+        return res;
+    }
+    public static int[][] invKey(int[][] mat){
+        int[][] res = new int[mat.length][mat[0].length];
 
-    public static String toStr(int[] v) {
+        int det = (mat[0][0]*mat[1][1] - mat[0][1]*mat[1][0])%26;
+        det = (det + 26)%26;
+        int invDet = getInvDet(det, 26);
+
+        res[0][0] = (mat[0][0] * invDet)%26;
+        res[1][1] = (mat[1][1] * invDet)%26;
+        res[0][1] = (-mat[0][1] * invDet + 26)%26;
+        res[1][0] = (-mat[1][0] * invDet + 26)%26;
+
+        return res;
+    }
+    public static int getInvDet(int a, int m){
+        a = a%m;
+        for(int x = 1; x <= m; x++){
+            if((a*x)%m == 1)return x;
+        }
+        return 1;
+
+    }
+    public static String toStr(int[] vec){
         StringBuilder sb = new StringBuilder();
-        for (int x : v)
-            sb.append((char) (x + 'A'));
+        for(int v : vec){
+            sb.append((char)(v+'A'));
+        }
         return sb.toString();
     }
-
-    public static String enc(String pt, int[][] k) {
-        int[] m = toVec(pt);
-        int[] e = mul(k, m);
-        return toStr(e);
-    }
-
-    public static String dec(String ct, int[][] k) {
-        int[][] ki = invKey(k);
-        int[] m = toVec(ct);
-        int[] d = mul(ki, m);
-        return toStr(d);
-    }
-
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
+        int[][] keyMat = new int[2][2];
+        for(int i=0;i<2;i++){
+            for(int j=0;j<2;j++){
+                keyMat[i][j] = sc.nextInt();
+            }
+        }
+        System.out.println("Enter the plainText : {len should be 2} ");
+        String str = sc.next().toUpperCase();
 
-        int[][] k = new int[2][2];
-        System.out.println("Enter the 2x2 key matrix (values between 0 and 25):");
-        for (int i = 0; i < 2; i++)
-            for (int j = 0; j < 2; j++)
-                k[i][j] = sc.nextInt();
+        String encText = encrypt(keyMat, str);
+        System.out.println(encText);
 
-        System.out.println("Enter the plaintext (length 2, uppercase letters only):");
-        String pt = sc.next().toUpperCase();
+        String decText = decrypt(keyMat, str);
+        System.out.println(decText);
 
-        String ct = enc(pt, k);
-        System.out.println("Encrypted Text: " + ct);
 
-        String dt = dec(ct, k);
-        System.out.println("Decrypted Text: " + dt);
-
-        sc.close();
     }
 }
