@@ -1,74 +1,53 @@
-package lab2;
-
-import java.util.Scanner;
-
-public class RC4 {
-    private byte[] S = new byte[256];
-    private int x = 0;
-    private int y = 0;
-
-    public RC4(byte[] key) {
+import java.util.*;
+public class _1i_rc4 {
+    static int x = 0;
+    static int y = 0;
+    static byte[] arr = new byte[256];
+    public _1i_rc4(byte[] key){
         init(key);
     }
-
-    private void init(byte[] key) {
-        int keyLength = key.length;
-        for (int i = 0; i < 256; i++) {
-            S[i] = (byte) i;
+    public static void init(byte[] key){
+        int kl = key.length;
+        for(int i=0;i<256;i++){
+            arr[i] = (byte)i;
         }
         int j = 0;
-        for (int i = 0; i < 256; i++) {
-            j = (j + S[i] + key[i % keyLength]) & 0xFF;
-            swap(i, j);
+        for(int i=0;i<256;i++){
+            j = (j + arr[i] + key[i%kl]) & 0xFF;
+            swap(i,j);
         }
     }
-
-    private void swap(int i, int j) {
-        byte temp = S[i];
-        S[i] = S[j];
-        S[j] = temp;
+    public static byte keyItem(){
+        x = (x+1)&0xFF;
+        y = (y+arr[x])&0xFF;
+        swap(x,y);
+        return arr[(arr[x] + arr[y]) & 0xFF];
     }
-
-    public byte[] encrypt(byte[] plaintext) {
-        byte[] ciphertext = new byte[plaintext.length];
-        for (int i = 0; i < plaintext.length; i++) {
-            ciphertext[i] = (byte) (plaintext[i] ^ keyItem());
+    public static byte[] encrypt(byte[] plainText){
+        byte[] cipherText = new byte[plainText.length];
+        for(int i=0;i< plainText.length;i++){
+            cipherText[i] = (byte)(plainText[i] ^ keyItem());
         }
-        return ciphertext;
+        return cipherText;
     }
-
-    private byte keyItem() {
-        x = (x + 1) & 0xFF;
-        y = (y + S[x]) & 0xFF;
-        swap(x, y);
-        return S[(S[x] + S[y]) & 0xFF];
+    public static void swap(int i, int j){
+        byte temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
     }
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter your RC4 encryption key : ");
+        String key  = sc.nextLine();
+        byte[] kb = key.getBytes();
+        _1i_rc4 rc4 = new _1i_rc4(kb);
+        String str = "hello world";
+        System.out.println("Encrypted text : ");
+        byte[] enc = rc4.encrypt(str.getBytes());
+        System.out.println(new String(enc));
+        System.out.println("Decrpted text : ");
+        System.out.println(new String(rc4.encrypt(enc)));
 
-        System.out.println("Enter a key for RC4 encryption:");
-        String keyString = scanner.nextLine();
-        byte[] key = keyString.getBytes();
-
-        // Encryption
-        RC4 rc4Encrypt = new RC4(key);
-        String plaintext = "Hello World";
-        System.out.println("Original Text: " + plaintext);
-
-        byte[] ciphertext = rc4Encrypt.encrypt(plaintext.getBytes());
-        System.out.println("Encrypted Bytes:");
-        for (byte b : ciphertext)
-            System.out.print(b + " ");
-        System.out.println();
-
-        // Decryption (NEW instance)
-        RC4 rc4Decrypt = new RC4(key);
-        byte[] decryptedBytes = rc4Decrypt.encrypt(ciphertext);
-        String decryptedText = new String(decryptedBytes);
-        System.out.println("Decrypted Text: " + decryptedText);
-
-        scanner.close();
     }
-
 }
